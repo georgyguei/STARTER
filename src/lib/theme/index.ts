@@ -1,3 +1,8 @@
+import { colors } from './colors';
 import { extendTheme } from './extendTheme';
 
-export const customTheme = extendTheme({});
+const customTheme = extendTheme({
+  colors,
+});
+
+export default customTheme;

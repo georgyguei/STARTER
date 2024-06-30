@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { customTheme } from './src/lib/theme';
+import customTheme from './src/lib/theme';
 
 const config: Config = {
   mode: 'jit',
