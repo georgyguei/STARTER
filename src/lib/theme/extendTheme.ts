@@ -34,7 +34,10 @@ type ThemePropertiesWithoutAny = ExcludeAny<CustomThemeConfig>;
  * Identifies the keys from `ThemePropertiesWithoutAny` that are considered numeric theme properties.
  * Currently, this is limited to the 'zIndex' property but can be expanded to include others.
  */
-type NumericThemeKeys = keyof Pick<ThemePropertiesWithoutAny, 'zIndex'>;
+type NumericThemeKeys = keyof Pick<
+  ThemePropertiesWithoutAny,
+  'zIndex' | 'fontWeight' | 'lineHeight'
+>;
 
 /**
  * Defines the structure for an extended theme configuration. It allows numeric theme keys
@@ -45,7 +48,7 @@ type NumericThemeKeys = keyof Pick<ThemePropertiesWithoutAny, 'zIndex'>;
  */
 export type ExtendedThemeConfig = Partial<{
   [P in keyof CustomThemeConfig]: P extends NumericThemeKeys
-    ? CustomThemeConfig[P] | ResolvableTo<KeyValuePair<string, number>>
+    ? ResolvableTo<KeyValuePair<string, string | number>>
     : CustomThemeConfig[P];
 }>;
 
