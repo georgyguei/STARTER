@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { customTheme } from './src/lib/theme';
 
 const config: Config = {
   mode: 'jit',
@@ -10,7 +11,9 @@ const config: Config = {
     './src/**/*.{ts,tsx}',
   ],
   prefix: '',
-  theme: {},
+  theme: {
+    extend: customTheme,
+  },
   plugins: [],
 };
 export default config;
