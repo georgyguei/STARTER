@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 import customTheme from './src/lib/theme';
 
 const config: Config = {
@@ -21,7 +22,30 @@ const config: Config = {
         xl: '1280px',
       },
     },
-    extend: customTheme,
+    extend: {
+      backgroundImage: {
+        'progress-striped':
+          'linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)',
+        'progress-indeterminate':
+          'linear-gradient(to right, transparent 0%, currentColor 50%, transparent 100%)',
+      },
+      animation: {
+        'progress-indeterminate':
+          'progress-indeterminate 1s ease infinite normal none running',
+        'progress-striped': 'progress-striped 1s linear infinite',
+      },
+      keyframes: {
+        'progress-indeterminate': {
+          '0%': { left: '-40%' },
+          '100%': { left: '100%' },
+        },
+        'progress-striped': {
+          '0%': { backgroundPosition: '1rem 0' },
+          '100%': { backgroundPosition: '0 0' },
+        },
+      },
+      ...customTheme,
+    },
   },
   plugins: [],
 };
