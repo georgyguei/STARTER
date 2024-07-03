@@ -33,6 +33,10 @@ const config: Config = {
         'progress-indeterminate':
           'progress-indeterminate 1s ease infinite normal none running',
         'progress-striped': 'progress-striped 1s linear infinite',
+        'circular-progress-indeterminate':
+          'circular-progress-indeterminate 2s linear infinite',
+        'circular-progress-indeterminate-stroke':
+          'circular-progress-indeterminate-stroke 1.5s linear infinite',
       },
       keyframes: {
         'progress-indeterminate': {
@@ -42,6 +46,24 @@ const config: Config = {
         'progress-striped': {
           '0%': { backgroundPosition: '1rem 0' },
           '100%': { backgroundPosition: '0 0' },
+        },
+        'circular-progress-indeterminate': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'circular-progress-indeterminate-stroke': {
+          '0%': {
+            strokeDasharray: '1, 400',
+            strokeDashoffset: '0',
+          },
+          '50%': {
+            strokeDasharray: '400, 400',
+            strokeDashoffset: '-100',
+          },
+          '100%': {
+            strokeDasharray: '400, 400',
+            strokeDashoffset: '-260',
+          },
         },
       },
       ...customTheme,
