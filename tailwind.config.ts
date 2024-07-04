@@ -37,6 +37,10 @@ const config: Config = {
           'circular-progress-indeterminate 2s linear infinite',
         'circular-progress-indeterminate-stroke':
           'circular-progress-indeterminate-stroke 1.5s linear infinite',
+        'beat-loader-1':
+          '0.7s linear 0s infinite normal both running beat-loader',
+        'beat-loader-2':
+          '0.7s linear 0.35s infinite normal both running beat-loader',
       },
       keyframes: {
         'progress-indeterminate': {
@@ -64,6 +68,10 @@ const config: Config = {
             strokeDasharray: '400, 400',
             strokeDashoffset: '-260',
           },
+        },
+        'beat-loader': {
+          '50%': { transform: 'scale(0.75)', opacity: '0.2' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
         },
       },
       ...customTheme,
