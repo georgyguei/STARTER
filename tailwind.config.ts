@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 import customTheme from './src/lib/theme';
 
 const config: Config = {
@@ -23,6 +24,20 @@ const config: Config = {
     },
     extend: customTheme,
   },
-  plugins: [],
+  plugins: [
+    plugin(({ matchUtilities }) => {
+      matchUtilities({
+        noOfLines: value => {
+          return {
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: value,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          };
+        },
+      });
+    }),
+  ],
 };
 export default config;
