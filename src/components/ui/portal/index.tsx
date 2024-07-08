@@ -2,7 +2,7 @@
 
 import { useMounted } from '@/hooks/useMounted';
 import { nanoid } from 'nanoid';
-import { createContext, use, useRef } from 'react';
+import { Children, cloneElement, isValidElement, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Box from '../layout/box';
 import type { UIComponent } from '../type';
@@ -27,39 +27,77 @@ type PortalProps = {
 };
 
 /**
- * This context will hold the container element for nested portals
+ * Recursively applies a container reference to all nested `Portal` components within a React component tree.
+ *
+ * @param children - The React component(s) to be traversed.
+ * @param containerRef - The React ref object pointing to the container element where `Portal` components should be rendered.
+ * @returns A new React component tree with updated `containerRef` props for all `Portal` components.
  */
-const PortalContext = createContext<React.RefObject<HTMLElement> | null>(null);
+const preparePortalChildren = (
+  children: React.ReactNode,
+  containerRef: React.RefObject<HTMLElement | null>
+): React.ReactNode => {
+  return Children.map(children, child => {
+    if (isValidElement(child)) {
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      if ((child.type as any).displayName === 'Portal') {
+        const { containerRef: childContainerRef, appendToParentPortal = true } =
+          (child as React.ReactElement).props as PortalProps;
+        return cloneElement<PortalProps>(child as React.ReactElement, {
+          containerRef:
+            childContainerRef ||
+            (appendToParentPortal ? containerRef : childContainerRef),
+        });
+      }
+      if (typeof (child as React.ReactElement).props.children !== 'undefined') {
+        return cloneElement(child as React.ReactElement, {
+          children: preparePortalChildren(
+            (child as React.ReactElement).props.children,
+            containerRef
+          ),
+        });
+      }
+    }
+    return child;
+  });
+};
 
 /**
  * Portal component renders children into a DOM node
  * that exists outside the DOM hierarchy of the parent component.
+ *
+ * @example
+ * <Portal>
+ *  <div>Content</div>
+ * </Portal>
+ *
+ * @param props - The props of the component
+ *
+ * @returns The Portal component
  */
 const Portal: UIComponent<'div', PortalProps> = props => {
-  const { containerRef, appendToParentPortal = true, ...rest } = props;
-
-  // Use the context
-  const parentPortalContainer = use(PortalContext);
-  const portalRef = useRef<HTMLDivElement>(null);
+  const {
+    containerRef,
+    children,
+    appendToParentPortal = true,
+    ...rest
+  } = props;
 
   const mounted = useMounted();
+  const portalContainerRef = useRef<HTMLDivElement>(null);
+  const portalId = useRef(`portal-${nanoid()}`).current;
 
   if (!mounted) {
     return <>{null}</>;
   }
 
-  // Determine the container for the current portal
-  const currentContainer = containerRef?.current || document.body;
-  const portalContainer =
-    appendToParentPortal && parentPortalContainer
-      ? (parentPortalContainer.current as HTMLElement)
-      : currentContainer;
+  const portalContainer = containerRef?.current || document.body;
+  const childrenArray = preparePortalChildren(children, portalContainerRef);
 
-  // Render the portal within a PortalContext provider to pass down the current portal's container
   return createPortal(
-    <PortalContext.Provider value={portalRef}>
-      <Box ref={portalRef} id={`portal-${nanoid()}`} {...rest} />
-    </PortalContext.Provider>,
+    <Box ref={portalContainerRef} id={portalId} {...rest}>
+      {childrenArray}
+    </Box>,
     portalContainer
   );
 };
